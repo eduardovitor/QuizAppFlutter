@@ -1,4 +1,3 @@
-import 'package:flutter/widgets.dart';
 import 'package:quiz_app/model/questao.dart';
 
 class QuestaoController {
@@ -9,8 +8,6 @@ class QuestaoController {
     return _questaoController;
   }
   QuestaoController._internal();
-  late PageController _pageController;
-  PageController get pageController => _pageController;
   final List<Questao> questoes = Questao()
       .dadosTeste
       .map(
@@ -51,16 +48,18 @@ class QuestaoController {
   void proxQuestao() {
     if (_numeroQuestao < 3) {
       _numeroQuestao++;
+      _estaRespondida = false;
     }
   }
 
   void antQuestao() {
     if (numeroQuestao != 0) {
       _numeroQuestao--;
+      _estaRespondida = false;
+      if (_numeroRespCorretas == 0) {
+      } else {
+        _numeroRespCorretas--;
+      }
     }
-  }
-
-  void atualizarNumQuestao(int index) {
-    _numeroQuestao = index + 1;
   }
 }

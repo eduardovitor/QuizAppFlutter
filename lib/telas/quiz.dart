@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quiz_app/telas/pontuacao.dart';
 import '../controller/questao_controller.dart';
 import '../model/questao.dart';
 
@@ -88,14 +89,17 @@ class _QuizState extends State<Quiz> {
     var numAlter = indice + 1;
     return GestureDetector(
         onTap: () {
-          var indQuestao = controller.numeroQuestao;
-          var acertou = controller.checarResp(questoes[indQuestao], indice);
-          if (acertou == true) {
-            icone = const Icon(Icons.check_circle_outline, color: Colors.green);
-            _counterAlter.value += 1;
-          } else {
-            icone = const Icon(Icons.close, color: Colors.red);
-            _counterAlter.value += 1;
+          if (!controller.estaRespondida) {
+            var indQuestao = controller.numeroQuestao;
+            var acertou = controller.checarResp(questoes[indQuestao], indice);
+            if (acertou == true) {
+              icone =
+                  const Icon(Icons.check_circle_outline, color: Colors.green);
+              _counterAlter.value += 1;
+            } else {
+              icone = const Icon(Icons.close, color: Colors.red);
+              _counterAlter.value += 1;
+            }
           }
         },
         child: ValueListenableBuilder<int>(
@@ -130,6 +134,15 @@ class _QuizState extends State<Quiz> {
             icon: const Icon(Icons.arrow_back)),
         IconButton(
             onPressed: () {
+              if (controller.numeroQuestao == 3) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Pontuacao(
+                        numRespCorretas: controller.numeroRespCorretas),
+                  ),
+                );
+              }
               controller.proxQuestao();
               _counterPage.value++;
             },

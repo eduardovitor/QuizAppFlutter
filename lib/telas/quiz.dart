@@ -10,7 +10,8 @@ class Quiz extends StatefulWidget {
 }
 
 class _QuizState extends State<Quiz> {
-  ValueNotifier<int> _counter = ValueNotifier<int>(0);
+  ValueNotifier<int> _counterAlter = ValueNotifier<int>(0);
+  ValueNotifier<int> _counterPage = ValueNotifier<int>(0);
   late List<Questao> questoes;
   QuestaoController controller = QuestaoController();
   @override
@@ -51,60 +52,50 @@ class _QuizState extends State<Quiz> {
   }
 
   buildQuestaoAlternativas() {
-    var numQuestao = controller.numeroQuestao;
-    return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(children: [
-          Text('Questão $numQuestao',
-              style: Theme.of(context)
-                  .textTheme
-                  .headline6!
-                  .copyWith(color: Colors.black)),
-          const SizedBox(height: 15),
-          Text(questoes[numQuestao - 1].questao!,
-              style: Theme.of(context).textTheme.headline6),
-          const SizedBox(height: 15),
-          Expanded(
-            child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: ListView.separated(
-                    itemCount: questoes.length,
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: 30),
-                    itemBuilder: ((context, index) {
-                      return buildAlternativa(
-                          index, questoes[numQuestao - 1].opcoes![index], null);
-                    }))),
-          )
-        ]));
+    return ValueListenableBuilder<int>(
+      builder: (context, value, child) => Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(children: [
+            Text('Questão ${controller.numeroQuestao + 1}',
+                style: Theme.of(context)
+                    .textTheme
+                    .headline6!
+                    .copyWith(color: Colors.black)),
+            const SizedBox(height: 15),
+            Text(questoes[controller.numeroQuestao].questao!,
+                style: Theme.of(context).textTheme.headline6),
+            const SizedBox(height: 15),
+            Expanded(
+              child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: ListView.separated(
+                      itemCount: questoes.length,
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 30),
+                      itemBuilder: ((context, index) {
+                        return buildAlternativa(
+                            index,
+                            questoes[controller.numeroQuestao].opcoes![index],
+                            null);
+                      }))),
+            )
+          ])),
+      valueListenable: _counterPage,
+    );
   }
-  // List.generate(
-  //           question.options.length,
-  //           (index) => Option(
-  //             index: index,
-  //             text: question.options[index],
-  //             press: () => _controller.checkAns(question, index)
-
-  //  ListView.separated(
-  //               itemCount: questoes.length,
-  //               separatorBuilder: (context, index) =>
-  //                   const SizedBox(height: 30),
-  //               itemBuilder: ((context, index) {
-  //                 return buildAlternativa(
-  //                     index, questoes[numQuestao - 1].opcoes![index], null)
 
   buildAlternativa(int indice, String texto, Icon? icone) {
     var numAlter = indice + 1;
     return GestureDetector(
         onTap: () {
-          var indQuestao = controller.numeroQuestao - 1;
+          var indQuestao = controller.numeroQuestao;
           var acertou = controller.checarResp(questoes[indQuestao], indice);
           if (acertou == true) {
             icone = const Icon(Icons.check_circle_outline, color: Colors.green);
-            _counter.value += 1;
+            _counterAlter.value += 1;
           } else {
             icone = const Icon(Icons.close, color: Colors.red);
-            _counter.value += 1;
+            _counterAlter.value += 1;
           }
         },
         child: ValueListenableBuilder<int>(
@@ -123,7 +114,7 @@ class _QuizState extends State<Quiz> {
               ),
             ),
           ),
-          valueListenable: _counter,
+          valueListenable: _counterAlter,
         ));
   }
 
@@ -131,8 +122,18 @@ class _QuizState extends State<Quiz> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        IconButton(onPressed: () {}, icon: const Icon(Icons.arrow_back)),
-        IconButton(onPressed: () {}, icon: const Icon(Icons.arrow_forward))
+        IconButton(
+            onPressed: () {
+              controller.antQuestao();
+              _counterPage.value++;
+            },
+            icon: const Icon(Icons.arrow_back)),
+        IconButton(
+            onPressed: () {
+              controller.proxQuestao();
+              _counterPage.value++;
+            },
+            icon: const Icon(Icons.arrow_forward))
       ],
     );
   }

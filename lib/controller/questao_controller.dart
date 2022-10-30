@@ -31,7 +31,7 @@ class QuestaoController {
   int _respostaSelecionada = -1;
   int get respostaSelecionada => _respostaSelecionada;
 
-  int _numeroQuestao = 1;
+  int _numeroQuestao = 0;
   int get numeroQuestao => _numeroQuestao;
 
   int _numeroRespCorretas = 0;
@@ -49,12 +49,14 @@ class QuestaoController {
   }
 
   void proxQuestao() {
-    if (_numeroQuestao != questoes.length) {
-      _estaRespondida = false;
-      _pageController.nextPage(
-          duration: const Duration(milliseconds: 250), curve: Curves.ease);
-    } else {
-      // Navegar para a página de resultados
+    if (_numeroQuestao < 3) {
+      _numeroQuestao++;
+    }
+  }
+
+  void antQuestao() {
+    if (numeroQuestao != 0) {
+      _numeroQuestao--;
     }
   }
 

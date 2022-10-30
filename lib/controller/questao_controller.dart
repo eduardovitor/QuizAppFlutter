@@ -31,19 +31,21 @@ class QuestaoController {
   int _respostaSelecionada = -1;
   int get respostaSelecionada => _respostaSelecionada;
 
-  int _numeroQuestao = 3;
+  int _numeroQuestao = 1;
   int get numeroQuestao => _numeroQuestao;
 
   int _numeroRespCorretas = 0;
   int get numeroRespCorretas => _numeroRespCorretas;
 
-  void checarResp(Questao questao, int indSelecionado) {
+  bool checarResp(Questao questao, int indSelecionado) {
     _estaRespondida = true;
     _respostaCorreta = questao.resposta!;
     _respostaSelecionada = indSelecionado;
     if (_respostaCorreta == _respostaSelecionada) {
       _numeroRespCorretas++;
+      return true;
     }
+    return false;
   }
 
   void proxQuestao() {
